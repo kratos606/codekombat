@@ -1,0 +1,46 @@
+.group-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:10px;
+    margin-right: 2rem;
+}
+.navbar-menu{
+    display: none!important;
+}
+i {
+    font-family: "Alex Brush", cursive!important;
+    font-size: 3rem;
+    color: rgb(5, 129, 253)!important;
+    transition: color 0.5s;
+}
+@media only screen and (max-width: 600px) {
+    h1{
+        font-size: 1.5rem;
+    }
+    i {
+        font-size: 2.25rem;
+    }
+    .group-btn{
+        display: none;
+    }
+    .group-btn.active{
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top:80px;
+        left:0;
+        width:100%;
+        gap:0;
+    }
+    .navbar-btn{
+        width: 100vw;
+        text-align: center;
+    }
+    .navbar-menu{
+        display: flex!important;
+        margin-right: 2rem!important;
+        align-items: center;
+        justify-content: center;
+    }
+}
