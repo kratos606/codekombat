@@ -30,9 +30,6 @@ COPY . .
 
 RUN npm run client-install
 
-# Build client-side code
-RUN npm run client-build
-
 # Build Dockerfile.web
 RUN docker build -f Dockerfile.python -t python-runner .
 
