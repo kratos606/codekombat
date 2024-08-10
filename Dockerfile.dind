@@ -23,8 +23,6 @@ COPY . .
 
 RUN npm run client-install
 
-RUN npm run client-build
-
 # Expose the port the app runs on
 EXPOSE 80 5173
 
