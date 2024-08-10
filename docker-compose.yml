@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.web
     environment:
-      - MONGO_SECRET_KEY=mongodb://mongo:27017/myapp
+      - MONGO_SECRET_KEY=mongodb+srv://yassirbenmoussa:likan@cluster0.ywt9m.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       - JSON_WEB_TOKEN_SECRET_KEY=sSeMvhbk5bPDSzpf274B9uFLK49oL2N1IRD1WDbSCRjleyo4tiwqA11aTZntRYkp
       - PORT=80
       - ADMIN_USERNAME=admin
@@ -16,17 +16,7 @@ services:
       - GOOGLE_CALLBACK_URL=http://localhost/api/auth/google-login/callback
     ports:
       - "80:80"
-    depends_on:
-      - mongo
-    networks:
-      - app-network
-  mongo:
-    image: mongo
-    command: mongod --port 27017
-    volumes:
-      - data-volume:/data/db
-    ports:
-      - "27017:27017"
+      - "5173:5173"
     networks:
       - app-network
 

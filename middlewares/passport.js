@@ -6,7 +6,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 
 passport.use(new GitHubStrategy({
     clientID: "989ac6d0c30c72eba9d3",
-    clientSecret: "4849007c59ead0451f0a4ae8b7523d8e553be1e1",
+    clientSecret: "7e140ee40f7485dd67c6379acba8ef460d482ca7",
     callbackURL: "http://localhost/api/auth/github-login/callback",
     scope: 'user:email'
 },
@@ -19,8 +19,8 @@ passport.use(new GitHubStrategy({
 ));
 
 passport.use(new FacebookStrategy({
-    clientID: "535309568731711",
-    clientSecret: "a1f536a6b7ed1de69c7311f16c26f68c",
+    clientID: "1171946400732980",
+    clientSecret: "50354c69ff7702c46832020db8f7b787",
     callbackURL: "http://localhost/api/auth/facebook-login/callback",
     profileFields: ['id', 'emails', 'name']
 },

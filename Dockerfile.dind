@@ -1,0 +1,30 @@
+# Use the official Docker DinD image
+FROM cruizba/ubuntu-dind:latest
+
+# Install Node.js, npm, and other dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends apt-utils && \
+    apt-get install -y --no-install-recommends curl && \
+    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y --no-install-recommends nodejs python3 python3-pip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN pip3 install Pillow --break-system-packages
+
+# Set the working directory
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+RUN npm run client-install
+
+# Expose the port the app runs on
+EXPOSE 80 5173
+
+# Start the application
+CMD ["npm", "run", "dev"]

@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
     },
     socialId: {
         type: String,
-        unique: true
+        unique: true,
+        sparse: true
     },
     isAdmin: {
         type: Boolean,

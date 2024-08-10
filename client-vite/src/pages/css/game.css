@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+.glass{
+    padding: 1rem;
+}
+td{
+    padding-block: 2rem;
+}
+td,tr{
+    width: 10vw;
+}
+.navbar-settings{
+    display: none!important;
+}
+.CodeMirror-scrollbar-filler {
+    visibility: hidden!important;
+}
+@media only screen and (max-width: 600px) {
+    .CodeMirror {
+            width:100%!important;
+        }
+    .bar{
+        min-width: 100%!important;
+    }
+    .split{
+        display: none;
+    }
+    .flex{
+        display: flex!important;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    body{
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .flex .glass{
+        width: 100vw;
+        padding: 1rem;
+    }
+    .Timer{
+        width: max-content!important;
+    }
+    .Timer div{
+        display: none;
+        margin-right: -1rem;
+    }
+    .tooltiptext{
+        display: none!important;
+    }
+    .navbar-link{
+        display: none!important;
+    }
+        .navbar-settings{
+            display: block!important;
+        }
+        ::-webkit-scrollbar {
+            width: 5px!important;
+        }
+    
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #9f9f9f;
+            border-radius: 5px;
+            border: 1px solid rgb(83, 83, 83);
+        }
+    
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #2C343A;
+            border-radius: 5px;
+        }
+    
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgb(78, 78, 78)
+        }
+        .CodeMirror-vscrollbar{
+            width: 5px;
+        }
+        .CodeMirror-hscrollbar{
+            height: 5px;
+        }
+}
+::-webkit-scrollbar {
+    width: 15px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #9f9f9f;
+    border-radius: 20px;
+    border: 1px solid rgb(83, 83, 83);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #2C343A;
+    border-radius: 20px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgb(78, 78, 78)
+}
+.cm-s-cobalt.CodeMirror {
+    background: #001528;
+    box-shadow: 0 0 2px white;
+    color: white;
+    padding-block: 1rem;
+}
+
+.cm-s-cobalt .CodeMirror-gutters {
+    background: #001528;
+    border-right: none;
+    padding-block: 1rem;
+}
+
+.cm-s-cobalt .CodeMirror-linenumber {
+    color: #ffffff;
+}
+
+.cm-s-dracula.CodeMirror {
+    background: #001528 !important;
+    box-shadow: 0 0 2px white !important;
+    color: white !important;
+    padding-block: 1rem;
+}
+
+.cm-s-dracula .CodeMirror-gutters {
+    background: #001528 !important;
+    border-right: none !important;
+    padding-block: 1rem;
+}
+
+.cm-s-dracula .CodeMirror-linenumber {
+    color: #ffffff !important;
+}
+
+.cm-s-lucario.CodeMirror {
+    background: #001528 !important;
+    box-shadow: 0 0 2px white !important;
+    color: white !important;
+    padding-block: 1rem;
+}
+
+.cm-s-lucario .CodeMirror-gutters {
+    background: #001528 !important;
+    border-right: none !important;
+    padding-block: 1rem;
+}
+
+.cm-s-lucario .CodeMirror-linenumber {
+    color: #ffffff !important;
+}
+
+.cm-s-material.CodeMirror {
+    background: #001528 !important;
+    box-shadow: 0 0 2px white !important;
+    color: white !important;
+    padding-block: 1rem;
+}
+
+.cm-s-material .CodeMirror-gutters {
+    background: #001528 !important;
+    border-right: none !important;
+    padding-block: 1rem;
+}
+
+.cm-s-material .CodeMirror-linenumber {
+    color: #ffffff !important;
+}
+
+.cm-s-monokai.CodeMirror {
+    background: #001528 !important;
+    box-shadow: 0 0 2px white !important;
+    color: white !important;
+    padding-block: 1rem;
+}
+
+.cm-s-monokai .CodeMirror-gutters {
+    background: #001528 !important;
+    border-right: none !important;
+    padding-block: 1rem;
+}
+
+.cm-s-monokai .CodeMirror-linenumber {
+    color: #ffffff !important;
+}
+
+.cm-s-blackboard.CodeMirror {
+    background: #001528 !important;
+    box-shadow: 0 0 2px white !important;
+    color: white !important;
+    padding-block: 1rem;
+}
+
+.cm-s-blackboard .CodeMirror-gutters {
+    background: #001528 !important;
+    border-right: none !important;
+    padding-block: 1rem;
+}
+
+.cm-s-blackboard .CodeMirror-linenumber {
+    color: #ffffff !important;
+}

@@ -4,6 +4,7 @@ const { increaseUserPoints } = require('./user');
 var fs = require('fs');
 const PythonShell = require('python-shell').PythonShell;
 const { exec } = require('child_process');
+const { result } = require('@hapi/joi/lib/base');
 
 // Get All Games
 
@@ -21,11 +22,7 @@ const getAllGames = async (req, res) => {
 const getGameById = async (req, res) => {
   try {
     const game = await Game.findById(req.params.id);
-    let tester = '';
-    if (fs.existsSync(game.tester)) {
-      tester = fs.readFileSync(game.tester, 'utf8');
-    }
-    res.status(200).json({ ...game._doc, tester: tester });
+    res.status(200).json({ ...game._doc });
   } catch (err) {
     res.status(500).json({ error: err });
   }
@@ -100,44 +97,81 @@ const remove = async (req, res) => {
 const submit = async (req, res) => {
   const { code } = req.body;
   const game = await Game.findById(req.params.id);
+
   if (!game) return res.json({ error: "Game not found" });
+
   const tester = `test/test_${new Date().getTime()}.py`;
   fs.writeFileSync(tester, game.tester);
+
   const filename = `test/temp/program.py`;
   fs.writeFileSync(filename, code, function (err) {
     if (err) {
       return res.json({ error: err });
     }
   });
+
   const promises = [];
   const testCaseResults = [];
-  game.testCases.map(test => {
-    promises.push(
-      new Promise((resolve, reject) => {
-        exec(`docker run -v %cd%/test:/test python-runner python ${tester.replace(/^test\//, "")} ${test.join(' ')}`, (error, stdout, stderr) => {
-          if (error) {
-            return res.json([JSON.stringify({ passed: false, message: error.message })]);
+
+  promises.push(
+    new Promise((resolve, reject) => {
+      exec(`docker run -v $(pwd)/test:/test python-runner python ${tester.replace(/^test\//, "")}`, (error, stdout, stderr) => {
+        if (stderr) {
+          const testResults = stderr.trim().split("\n");
+          let hasCapturedError = false;
+
+          testResults.forEach((result) => {
+            if (result.includes("...")) {
+              const [testCase, status] = result.split("...");
+              const passed = status.trim() === "ok";
+              testCaseResults.push({ testCase: testCase.trim().split(' ')[0], passed });
+            } else if (!hasCapturedError && (result.includes("Error") || result.includes("Exception"))) {
+              // Capture and push the error message without traceback
+              testCaseResults.push({
+                testCase: "Error",
+                passed: false,
+                message: result
+              });
+              hasCapturedError = true;
+            }
+          });
+
+          // Assign assertion error messages to failed test cases
+          for (const result of testResults) {
+            if (result.startsWith('AssertionError')) {
+              for (const test of testCaseResults) {
+                if (!test.passed && !test.message) {
+                  test.message = result;
+                  break;  // Exit the inner loop once the error is assigned
+                }
+              }
+            }
           }
-          stdout.split(/\r?\n/).map((result) => {
-            testCaseResults.push(result);
-          })
-          resolve(true);
-        });
-      })
-    );
-  });
+
+          return resolve(true);
+        }
+
+        if (stdout) {
+          const testResults = stdout.trim().split("\n");
+          testResults.forEach((result) => {
+            if (result.includes("...")) {
+              const [testCase, status] = result.split("...");
+              const passed = status.trim() === "ok";
+              testCaseResults.push({ testCase: testCase.trim().split(' ')[0], passed });
+            }
+          });
+          return resolve(true);
+        }
+      });
+    })
+  );
+
   Promise.all(promises).then(() => {
-    testCaseResults.pop()
-    testCaseResults.every(result => {
-      return JSON.parse(result)['passed']
-    }) ?
-      (
-        increaseUserPoints(req.user.id, game._id, game.pts, code)
-      )
-      :
-      null;
-    res.json(testCaseResults);
+    if (testCaseResults.every(result => result.passed)) {
+      increaseUserPoints(req.user.id, game._id, game.pts, code);
+    }
+    return res.json(testCaseResults);
   });
-}
+};
 
 module.exports = { getAllGames, getGameById, getRandomGame, create, update, remove, submit };

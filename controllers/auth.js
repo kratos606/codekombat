@@ -17,7 +17,7 @@ const githubLoginCallback = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-        }).redirect('http://localhost/');
+        }).redirect('http://localhost:5173/');
     } catch (err) {
         res.send({ error: err.message });
     }
@@ -36,7 +36,7 @@ const facebookLoginCallback = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-        }).redirect('http://localhost/');
+        }).redirect('http://localhost:5173/');
     } catch (err) {
         res.send({ error: err.message });
     }
@@ -55,7 +55,7 @@ const googleLoginCallback = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
-        }).redirect('http://localhost/');
+        }).redirect('http://localhost:5173/');
     } catch (err) {
         res.send({ error: err.message });
     }
