@@ -5,9 +5,9 @@ const User = require('../models/users');
 const { promisify } = require('util');
 const passport = require('../middlewares/passport');
 
-// Login Controller for facebook authentication
+// Login Controller for GitHub authentication
 const githubLoginController = passport.authenticate('github', { scope: ['user:email'], session: false })
-// Callback for faceook authentication
+// Callback for GitHub authentication
 const githubLoginCallback = async (req, res) => {
     try {
         const user = req.user;
@@ -17,16 +17,17 @@ const githubLoginCallback = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).redirect('http://localhost:5173/');
     } catch (err) {
         res.send({ error: err.message });
     }
 };
 
-// Login Controller for facebook authentication
+// Login Controller for Facebook authentication
 const faceookLoginController = passport.authenticate('facebook', { scope: ['email'], session: false });
 
-// Callback for faceook authentication
+// Callback for Facebook authentication
 const facebookLoginCallback = async (req, res) => {
     try {
         const user = req.user;
@@ -36,6 +37,7 @@ const facebookLoginCallback = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).redirect('http://localhost:5173/');
     } catch (err) {
         res.send({ error: err.message });
@@ -55,6 +57,7 @@ const googleLoginCallback = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).redirect('http://localhost:5173/');
     } catch (err) {
         res.send({ error: err.message });
@@ -62,14 +65,12 @@ const googleLoginCallback = async (req, res) => {
 };
 
 // Login Validation
-
 const loginValidation = Joi.object({
     email: Joi.string().required().email(),
     password: Joi.string().required()
 });
 
 // Login Controller
-
 const loginController = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -84,6 +85,7 @@ const loginController = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).send(currentUser);
     }
     catch (err) {
@@ -91,16 +93,14 @@ const loginController = async (req, res) => {
     }
 }
 
-// register validation
-
+// Register Validation
 const registerValidation = Joi.object({
     username: Joi.string().required(),
     email: Joi.string().required().email(),
     password: Joi.string().required()
 });
 
-// register route
-
+// Register Controller
 const registerController = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -126,6 +126,7 @@ const registerController = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "none",
+            maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).send();
     } catch (err) {
         res.send({ error: err.message });
@@ -133,7 +134,6 @@ const registerController = async (req, res) => {
 }
 
 // Check if the user is authenticated
-
 const checkController = async (req, res) => {
     let currentUser;
     if (req.cookies.token) {
@@ -147,7 +147,6 @@ const checkController = async (req, res) => {
 }
 
 // Logout Controller
-
 const logoutController = async (req, res) => {
     res
         .cookie("token", "", {
