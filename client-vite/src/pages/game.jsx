@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Typography, Button, Drawer, Avatar } from '@mui/material'
+import { Tabs, Tab } from '@mui/material';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { Tooltip } from '../components';
@@ -64,6 +65,24 @@ function Game() {
     const [whiteboardMode, setWhiteboardMode] = useState(false);
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [testResult, setTestResult] = useState([]);
+    const [isPhone, setIsPhone] = useState(window.innerWidth < 840);
+    const [tabValue, setTabValue] = useState(0);
+    const handleTabChange = (event, newValue) => {
+        setTabValue(newValue);
+    };
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsPhone(window.innerWidth < 840);
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup the event listener on component unmount
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
     const certificate = async () => {
         const { data } = await axios.get(`${BaseURL}/api/user/certificate`)
         if (data.certificate) {
@@ -103,7 +122,7 @@ function Game() {
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <Link to="/user" style={{ all: 'unset' }}>
                         <button style={{ color: 'white', textTransform: 'none', fontFamily: '"Open Sans", Helvetica, Arial, sans-serif', fontSize: '18px', backgroundColor: '#626ee3', width: '160px', height: '40px', borderRadius: '0 0 5px 5px', padding: '1.2rem .5rem', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }} variant="filled" onClick={() => localStorage.removeItem('code')} >
-                            <span>CodingArt</span>
+                            <span>CodeKombat</span>
                         </button>
                     </Link>
                     <Link to="/user/game" style={{ all: 'unset' }} className='navbar-link'>
@@ -139,37 +158,118 @@ function Game() {
                     </Box>
                 </div>
             </nav>
-            <Split
-                className="split main"
-                minSize={0}
-                sizes={[50,50]}
-            >
-                <div className={'section'} style={{height:'100%',overflow:'hidden'}}>
-                <div className='glass' style={{ padding: '1rem' }}>
+            {isPhone ? (
+                <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 80px)' }}>
+                    <Box sx={{ flexGrow: 1, overflow: 'hidden', padding: '1rem', display: 'flex', flexDirection: 'column' }}>
+                        {tabValue === 0 && (
+                            <div className={'section'} style={{ flexGrow: 1, overflow: 'auto' }}>
+                                <div className='glass' style={{ height: '100%',overflow:'auto' }}>
+                                    <h1>{game.name}</h1>
+                                    <div dangerouslySetInnerHTML={{ __html: game.description }} />
+                                </div>
+                            </div>
+                        )}
+                        {tabValue === 1 && (
+                            <div className={'section'} style={{ flexGrow: 1, overflow: 'auto' }}>
+                                <div className={isFullScreen ? 'glass fullscreen' : 'glass'} style={{ height: '100%' }}>
+                                    <Editor
+                                        fontSize={fontSize}
+                                        theme={theme}
+                                        keymap={keymap}
+                                        code={code}
+                                        setCode={setCode}
+                                        isFullScreen={isFullScreen}
+                                        setIsFullScreen={setIsFullScreen}
+                                        whiteboardMode={whiteboardMode}
+                                        setWhiteboardMode={setWhiteboardMode}
+                                        title="Solution"
+                                        button="Submit Code"
+                                        show={'on'}
+                                        store={true}
+                                        onClick={() => submit()}
+                                        onReset={() => setCode(game.codeBase)}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {tabValue === 2 && (
+                            <div className={'section'} style={{ flexGrow: 1, overflow: 'auto' }}>
+                                <div className='glass' style={{ height: '100%' }}>
+                                    <h1>Test Result</h1>
+                                    <div style={{
+                                        width: '100%', height: 'calc(100% - 80px)', backgroundColor: '#001528', boxShadow: '0 0 2px white', overflow: 'auto', padding: '1rem'
+                                    }}>
+                                        <p>{testResult.map(el => el.passed ? <Box><Typography variant='p' sx={{
+                                            color: '#66bb6a'
+                                        }}><Check color='success' sx={{ transform: 'translateY(0.4rem)' }} /> Test passed</Typography></Box> : <Box><Typography variant='p' sx={{ color: '#f44336' }}><Close sx={{ color: '#f44336', transform: 'translateY(0.4rem)' }} /> Test failed : {el.message}</Typography></Box>)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </Box>
+                    <Tabs
+                        value={tabValue}
+                        onChange={handleTabChange}
+                        variant="fullWidth"
+                        indicatorColor="primary"
+                        textColor="primary"
+                        centered
+                        sx={{ flexShrink: 0 }}
+                    >
+                        <Tab label="Description" />
+                        <Tab label="Solution" />
+                        <Tab label="Test Result" />
+                    </Tabs>
+                </div>
+            ) : (
+                <Split
+                    className="split main"
+                    minSize={0}
+                    sizes={[50, 50]}
+                >
+                    <div className={'section'} style={{ height: '100%', overflow: 'hidden' }}>
+                        <div className='glass' style={{ padding: '1rem',overflow:'auto' }}>
                             <h1>{game.name}</h1>
-                            {/* Render the HTML from ReactQuill safely */}
                             <div dangerouslySetInnerHTML={{ __html: game.description }} />
                         </div>
-                </div>
-                <Split className={'split column'} direction='vertical' minSize={0} sizes={[60,40]}>
-                <div className={'section'}>
-                <div className={isFullScreen ? 'glass hui fullscreen' : 'glass hui'}>
-                    <Editor fontSize={fontSize} theme={theme} keymap={keymap} code={code} setCode={setCode} isFullScreen={isFullScreen} setIsFullScreen={setIsFullScreen} whiteboardMode={whiteboardMode} setWhiteboardMode={setWhiteboardMode} title='Solution' button='Submit Code' show={'on'} store={true} onClick={() => submit()} onReset={() => setCode(game.codeBase)} /></div>
-                </div>
-                <div className={'section'} style={{overflow:'hidden'}}>
-                <div className='glass'>
+                    </div>
+                    <Split className={'split column'} direction='vertical' minSize={0} sizes={[60, 40]}>
+                        <div className={'section'}>
+                            <div className={isFullScreen ? 'glass hui fullscreen' : 'glass hui'}>
+                                <Editor
+                                    fontSize={fontSize}
+                                    theme={theme}
+                                    keymap={keymap}
+                                    code={code}
+                                    setCode={setCode}
+                                    isFullScreen={isFullScreen}
+                                    setIsFullScreen={setIsFullScreen}
+                                    whiteboardMode={whiteboardMode}
+                                    setWhiteboardMode={setWhiteboardMode}
+                                    title='Solution'
+                                    button='Submit Code'
+                                    show={'on'}
+                                    store={true}
+                                    onClick={() => submit()}
+                                    onReset={() => setCode(game.codeBase)}
+                                />
+                            </div>
+                        </div>
+                        <div className={'section'} style={{ overflow: 'hidden' }}>
+                            <div className='glass' style={{display:'flex',flexDirection:'column'}}>
                                 <h1>Test Result</h1>
                                 <div style={{
-                                    width: '100%', height: '65%', backgroundColor: '#001528', boxShadow: '0 0 2px white', overflow: 'auto', padding: '1rem'
+                                    width: '100%', flexGrow:1, backgroundColor: '#001528', boxShadow: '0 0 2px white', overflow: 'auto', padding: '1rem'
                                 }}>
                                     <p>{testResult.map(el => el.passed ? <Box><Typography variant='p' sx={{
                                         color: '#66bb6a'
                                     }}><Check color='success' sx={{ transform: 'translateY(0.4rem)' }} /> Test passed</Typography></Box> : <Box><Typography variant='p' sx={{ color: '#f44336' }}><Close sx={{ color: '#f44336', transform: 'translateY(0.4rem)' }} /> Test failed : {el.message}</Typography></Box>)}</p>
                                 </div>
                             </div>
-                </div>
+                        </div>
+                    </Split>
                 </Split>
-            </Split>
+            )}
             <Drawer
                 anchor={'right'}
                 open={open}

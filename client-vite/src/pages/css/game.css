@@ -16,7 +16,7 @@ td,tr{
 .CodeMirror-scrollbar-filler {
     visibility: hidden!important;
 }
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 840px) {
     .CodeMirror {
             width:100%!important;
         }

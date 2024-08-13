@@ -14,37 +14,19 @@ import 'react-quill/dist/quill.snow.css'; // Import the CSS for the editor
 import BaseURL from '../config/app.config'
 import './css/game.css'
 
-const defaultTest = `import sys,os
-import threading
-import json
+const defaultTest = `import unittest
 from temp.program import *
 
-def test():
-    # write you test here
-    # return array ex : [condition, passed_message if condition failed_message else failed_message]
-    pass
+class TestProgram(unittest.TestCase):
 
-def run():
-    try:
-        if test()[0]:
-            print(json.dumps({'passed':True}))
-        else:
-            print(json.dumps({'passed':False,'message':test()[1]}))
-    except Exception as e:
-        print(json.dumps({'passed':False,'message':str(e)}))
-    t2.cancel()
-
-def runtime():
-    if t.is_alive():
-        print(json.dumps({'passed':False,'message':"This solution takes too long"}))
-        os._exit(0)
+    def test_case_1(self):
+        # write your test cases
 
 if __name__ == '__main__':
-    t = threading.Thread(target=run)
-    t2 = threading.Timer(5, runtime) 
-    t.daemon = True
-    t.start()
-    t2.start()`
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(TestProgram)
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite)
+`
 
 function CreateGame() {
     const [open, setOpen] = useState(false)
@@ -83,7 +65,7 @@ function CreateGame() {
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <Link to="/user" style={{ all: 'unset' }}>
                         <button style={{ color: 'white', textTransform: 'none', fontFamily: '"Open Sans", Helvetica, Arial, sans-serif', fontSize: '18px', backgroundColor: '#626ee3', width: '160px', height: '40px', borderRadius: '0 0 5px 5px', padding: '1.2rem .5rem', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }} variant="filled" onClick={() => localStorage.removeItem('code')} >
-                            <span>CodingArt</span>
+                            <span>CodeKombat</span>
                         </button>
                     </Link>
                 </div>
@@ -149,7 +131,7 @@ function CreateGame() {
                             />
                         </div>
                         </div>
-                        <Split className={'split column'} direction='vertical' minSize={0} sizes={[60,40]}>
+                        <Split className={'split column'} direction='vertical' minSize={0} sizes={[60,40]} style={{overflow:'hidden'}}>
                             <div className={'section'}>
                             <div className='glass'><Editor code={tester} setCode={setTester} title={'Test'} keymap={keymap} theme={theme} fontSize={fontSize} button={'Submit Test'} store={true} onClick={() => submit()} onReset={() => setTester(defaultTest)} /></div>
                             </div>

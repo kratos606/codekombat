@@ -14,7 +14,7 @@ function Home() {
         <>
             <div className="home-container">
                 <Box>
-                    <h1 style={{ textAlign: 'center' }}>Welcome to CodingArt</h1>
+                    <h1 style={{ textAlign: 'center' }}>Welcome to CodeKombat</h1>
                     <p style={{ textAlign: 'center' }}>
                         Unlimited coding interviews questions.
                     </p>

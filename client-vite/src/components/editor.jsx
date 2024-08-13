@@ -66,6 +66,7 @@ function Editor(props) {
             </Box>
             <CodeMirror
                 value={props.code}
+                height={'calc(100% - 60px)'}
                 options={{
                     keyMap: props.keymap,
                     mode: props.whiteboardMode ? 'default' : 'python',

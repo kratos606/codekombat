@@ -18,7 +18,7 @@ const githubLoginCallback = async (req, res) => {
             secure: true,
             sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
-        }).redirect('http://localhost:5173/');
+        }).redirect('/');
     } catch (err) {
         res.send({ error: err.message });
     }
@@ -38,7 +38,7 @@ const facebookLoginCallback = async (req, res) => {
             secure: true,
             sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
-        }).redirect('http://localhost:5173/');
+        }).redirect('/');
     } catch (err) {
         res.send({ error: err.message });
     }
@@ -58,7 +58,7 @@ const googleLoginCallback = async (req, res) => {
             secure: true,
             sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
-        }).redirect('http://localhost:5173/');
+        }).redirect('/');
     } catch (err) {
         res.send({ error: err.message });
     }
