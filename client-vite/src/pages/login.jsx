@@ -35,9 +35,9 @@ function Login() {
             <Typography variant="h3">Login</Typography>
             {error && <Typography variant="body1" color="error">{error}</Typography>}
             <div style={{ display: 'flex', justifyContent: 'space-arround', gap: '1rem' }}>
-                <a style={{ textDecoration: 'none', border: '2px solid white', padding: '.5rem 1rem', borderRadius: '.3rem' }} href='http://localhost/api/auth/google-login'>Google</a>
-                <a style={{ textDecoration: 'none', border: '2px solid white', padding: '.5rem 1rem', borderRadius: '.3rem' }} href='http://localhost/api/auth/facebook-login'>Facebook</a>
-                <a style={{ textDecoration: 'none', border: '2px solid white', padding: '.5rem 1rem', borderRadius: '.3rem' }} href='http://localhost/api/auth/github-login'>Github</a>
+                <a style={{ textDecoration: 'none', border: '2px solid white', padding: '.5rem 1rem', borderRadius: '.3rem' }} href='/api/auth/google-login'>Google</a>
+                <a style={{ textDecoration: 'none', border: '2px solid white', padding: '.5rem 1rem', borderRadius: '.3rem' }} href='/api/auth/facebook-login'>Facebook</a>
+                <a style={{ textDecoration: 'none', border: '2px solid white', padding: '.5rem 1rem', borderRadius: '.3rem' }} href='/api/auth/github-login'>Github</a>
             </div>
             <TextField
                 className='input'
