@@ -45,6 +45,22 @@ CodeKombat is a full-stack coding platform designed for developers who want to p
     ```
     The app will be running on [http://localhost:5000](http://localhost:5000).
 
+### Docker
+
+You can run CodeKombat using Docker. This provides an isolated environment to execute the application.
+
+1. Build the Docker image:
+    ```bash
+    docker build -f Dockerfile.dind -t codekombat .
+    ```
+
+2. Run the Docker container:
+    ```bash
+    docker run -it -p 80:80 -p 5173:5173 -p 443:443 --privileged codekombat
+    ```
+    - The `--privileged` flag is used to give the container extended privileges. Ensure this is necessary for your use case.
+    - The application will be accessible through the ports you've mapped (e.g., `http://localhost`).
+
 ### Client-Side Development
 The client is already built. To update the client side during development:
 1. Update the `app.config.js` file in the `client-vite` folder with the backend URL.
