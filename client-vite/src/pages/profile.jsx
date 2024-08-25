@@ -27,7 +27,7 @@ function Profile() {
     return (
         <>
             <Navbar />
-            <Box className='glass' sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 'min(90vw,500px)' }}>
+            <Box className='glass' sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 'min(90vw,500px)',height:'max-content' }}>
                 <Box>
                     <h1 style={{ marginBottom: '3rem', textAlign: 'center' }}>
                         Profile

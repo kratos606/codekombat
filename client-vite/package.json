@@ -23,9 +23,11 @@
     "algoexpert": "file:..",
     "axios": "^0.27.2",
     "draft-js": "^0.11.7",
+    "highlight.js": "^11.10.0",
     "mui-rte": "^2.0.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
+    "react-highlight": "^0.15.0",
     "react-quill": "^2.0.0",
     "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
@@ -43,6 +45,7 @@
     "eslint-plugin-react": "^7.34.3",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
-    "vite": "^5.3.4"
+    "vite": "^5.3.4",
+    "vite-plugin-compression": "^0.5.1"
   }
 }

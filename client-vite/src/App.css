@@ -19,16 +19,6 @@ body{
     font-size: 2rem;
     transform: rotateY(180deg);
   }
-  .hui button:nth-child(1) {
-    all: unset;
-    width: 50px;
-    padding: .3rem;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
   .glass button:hover {
     background-color: #626ee3;
   }
@@ -199,6 +189,25 @@ body{
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-Left: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(5px);
+}
+
+.hljs{
+    letter-spacing: 1px;
+    background: #001528;
+}
+
+.background{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.solved {
+    background: rgba(34, 255, 4, 0.3);
 }
 
 .box p {

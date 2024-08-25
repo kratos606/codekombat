@@ -126,7 +126,10 @@ function CreateGame() {
                             <ReactQuill
                                 theme="snow"
                                 value={inputs.description || ''}
-                                onChange={(content) => setInputs({ ...inputs, description: content })}
+                                onChange={(content) => setInputs(prevInputs => ({
+                                    ...prevInputs,
+                                    description: content,
+                                }))}
                                 style={{ marginBlockStart: '1rem', minWidth: '220px', flex: 1, minHeight: '100px' }}
                             />
                         </div>

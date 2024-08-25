@@ -3,11 +3,11 @@ import { Box, Select, MenuItem } from '@mui/material';
 
 function ThemeDropDown(props) {
     return (
-        <Box sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative',width:'100%' }}>
             <Select
                 className='Button'
                 sx={{
-                    width: '20vw',
+                    width: '100%',
                     backgroundColor: '#15314b!important',
                 }}
                 value={props.theme}

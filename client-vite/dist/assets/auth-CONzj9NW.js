@@ -1,0 +1,1 @@
+import{l as e,m as u,n as a}from"./index-Cr8A9Rf2.js";function n(t=e){const o=t===e?u:a(t);return function(){const{store:s}=o();return s}}const c=n();function i(t=e){const o=t===e?c:n(t);return function(){return o().dispatch}}const S=i(),l=()=>({type:"LOGIN_REQUEST"}),R=t=>({type:"LOGIN_SUCCESS",payload:t}),d=t=>({type:"LOGIN_FAILURE",payload:t});export{R as a,d as b,l,S as u};

@@ -3,13 +3,13 @@ import { Box, Select, MenuItem } from '@mui/material';
 
 function KeymapDropDown(props) {
     return (
-        <Box sx={{ position: 'relative' }}>
+        <Box sx={{ position: 'relative',width:'100%' }}>
             <Select
                 id="keymap-select"
                 className='Button'
                 value={props.keymap}
                 variant="outlined"
-                sx={{ width: '20vw', marginTop: '10px' }}
+                sx={{ width: '100%', marginTop: '10px' }}
                 onChange={(e) => {
                     props.setKeymap(e.target.value);
                     localStorage.setItem('keymap', e.target.value);

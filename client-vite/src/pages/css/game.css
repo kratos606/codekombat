@@ -23,9 +23,6 @@ td,tr{
     .bar{
         min-width: 100%!important;
     }
-    .split{
-        display: none;
-    }
     .flex{
         display: flex!important;
         flex-direction: column;
@@ -50,6 +47,9 @@ td,tr{
     .tooltiptext{
         display: none!important;
     }
+    .glass img{
+        width: 100%;
+    }
     .navbar-link{
         display: none!important;
     }
@@ -58,6 +58,7 @@ td,tr{
         }
         ::-webkit-scrollbar {
             width: 5px!important;
+            height: 5px!important;
         }
     
         /* Track */

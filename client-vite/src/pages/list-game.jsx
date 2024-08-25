@@ -24,6 +24,7 @@ function ListGame() {
         "max-glare": 1,
     };
     const [games, setGames] = useState([]);
+    const [userGame , setUserGame] = useState([]);
     const navigate = useNavigate();
     useEffect(() => {
         const getGames = async () => {
@@ -32,24 +33,35 @@ function ListGame() {
         }
         getGames();
     }, []);
+    useEffect(() => {
+        const getuserGames = async () => {
+            const res = await axios.get(`${BaseURL}/api/auth/check`)
+            setUserGame(res.data.currentUser.games)
+        }
+        getuserGames()  
+    })
+    const isGameSolved = (gameId) => {
+        if(!userGame) return false
+        return userGame.includes(gameId)
+    };
     return (
         <>
             <Navbar />
             <div style={{ width: '100%', height: 'calc(100vh - 80px)', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', flexWrap: 'wrap', overflowX: 'hidden', overflowY: 'auto' }}>
-                {
-                    games.map(game => {
-                        return (
-                            <Tilt className="box" options={options} onClick={() => {
-                                localStorage.removeItem('code')
-                                navigate(`/user/game/${game._id}`)
-                            }}>
-                                <div>
-                                    <p>{game.name}</p>
-                                </div>
-                            </Tilt>
-                        )
-                    })
-                }
+                {games.map((game) => {
+                    const gameClass = isGameSolved(game._id) ? 'box solved' : 'box';
+
+                    return (
+                        <Tilt className={gameClass} options={options} key={game._id} onClick={() => {
+                            localStorage.removeItem('code');
+                            navigate(`/user/game/${game._id}`);
+                        }}>
+                            <div>
+                                <p>{game.name}</p>
+                            </div>
+                        </Tilt>
+                    );
+                })}
             </div>
         </>
     )

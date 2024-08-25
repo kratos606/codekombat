@@ -30,7 +30,11 @@ if __name__ == '__main__':
 function UpdateGame() {
     const { id } = useParams();
     const [open, setOpen] = useState(false)
-    const [inputs, setInputs] = useState({})
+    const [inputs, setInputs] = useState({
+        name: '', // Initialize with empty strings
+        description: '',
+        pts: 0, 
+    });
     const [tester, setTester] = useState(localStorage.getItem('code') || defaultTest);
     const [testCases, setTestCases] = useState('');
     const [codeBase, setCodeBase] = useState('');
@@ -42,10 +46,14 @@ function UpdateGame() {
     useEffect(async () => {
         await axios.get(`${BaseURL}/api/game/${id}`)
             .then(res => {
-                setInputs(res.data)
+                setInputs(prevInputs => ({
+                    ...prevInputs,
+                    name: res.data.name,
+                    pts: res.data.pts,
+                    description:res.data.description
+                }));
                 setCodeBase(res.data.codeBase)
                 setTester(res.data.tester)
-                console.log(res.data)
                 setTestCases(res.data.testCases.map(el =>
                     el.join(' ')
                 ).join('\n'))
@@ -60,6 +68,7 @@ function UpdateGame() {
             tester: tester,
             testCases: testCases.split('\n').map(x => x.split(' ')),
         }
+        console.log(game)
         await axios.put(`${BaseURL}/api/game/${id}`, game).then(res => {
             setSuccessStatus(true)
             setSuccessMessage(res.data.success ? 'Game updated successfully' : 'Game update failed');
@@ -137,7 +146,10 @@ function UpdateGame() {
                             <ReactQuill
                                 theme="snow"
                                 value={inputs.description || ''}
-                                onChange={(content) => setInputs({ ...inputs, description: content })}
+                                onChange={(content) => setInputs(prevInputs => ({
+                                    ...prevInputs,
+                                    description: content,
+                                }))}
                                 style={{ marginBlockStart: '1rem', minWidth: '220px', flex: 1, minHeight: '100px' }}
                             />
                         </div>
@@ -153,93 +165,6 @@ function UpdateGame() {
                             </div>
                     </Split>
                 </Split>
-            <div style={{ display: 'none' }} className='flex'>
-                <div className='glass' style={{ padding: '2rem', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignContent: 'space-around' }}>
-                    <Typography variant='h4'>
-                        Create Game
-                    </Typography>
-                    <TextField
-                        className='input'
-                        variant="outlined"
-                        label="Name"
-                        type={'text'}
-                        value={inputs.name || ''}
-                        color='success'
-                        InputLabelProps={{
-                            style: {
-                                fontWeight: 'bold'
-                            }
-                        }}
-                        sx={{
-                            marginBlockStart: '1rem',
-                            minWidth: '220px',
-                        }}
-                        onChange={(e) => setInputs({ ...inputs, name: e.target.value })}
-                        fullWidth
-                    />
-                    <TextField
-                        className='input'
-                        variant="outlined"
-                        label="Points"
-                        type={'number'}
-                        value={inputs.pts || ''}
-                        color='success'
-                        InputLabelProps={{
-                            style: {
-                                fontWeight: 'bold'
-                            }
-                        }}
-                        sx={{
-                            marginBlockStart: '1rem',
-                            minWidth: '220px',
-                        }}
-                        onChange={(e) => setInputs({ ...inputs, pts: e.target.value })}
-                        fullWidth
-                    />
-                    <TextField
-                        multiline
-                        className='input'
-                        variant="outlined"
-                        label="Description"
-                        type={'text'}
-                        color='success'
-                        maxRows={5}
-                        InputLabelProps={{
-                            style: {
-                                fontWeight: 'bold'
-                            }
-                        }}
-                        sx={{
-                            marginBlockStart: '1rem',
-                            minWidth: '220px'
-                        }}
-                        InputProps={{
-                            style: {
-                                all: 'unset',
-                                height: '100px',
-                                padding: '1rem',
-                                borderRadius: '5px'
-                            }
-                        }}
-                        value={inputs.description || ''}
-                        onChange={(e) => setInputs({ ...inputs, description: e.target.value })}
-                        fullWidth
-                    />
-                </div>
-                <div className='glass' style={{ width: '100%' }}>
-                    <Box sx={{ marginLeft: '.5rem', height: '2rem', lineHeight: '2rem', width: '100px', background: 'rgb(255,255,255,0.2)', textAlign: 'center', borderRadius: '2rem', marginBlockEnd: '1rem' }}>
-                        Test Cases
-                    </Box><textarea style={{
-                        height: 'calc(93% - 2rem)', width: 'max(100%,120px)', padding: '1rem', background: '#001528', color: 'white', boxShadow: '0 0 2px white', resize: 'none', border: 'none', outline: 'none'
-                    }} value={testCases} onChange={(e) => setTestCases(e.target.value)} />
-                </div>
-                <div className='glass' style={{ width: '100%' }}>
-                    <Editor code={tester} setCode={setTester} title={'Test'} keymap={keymap} theme={theme} fontSize={fontSize} button={'Submit Test'} store={true} onClick={() => submit()} onReset={() => setTester(defaultTest)} />
-                </div>
-                <div className='glass' style={{ width: '100%' }}>
-                    <Editor code={codeBase} setCode={setCodeBase} title={'Code Base'} keymap={keymap} theme={theme} fontSize={fontSize} show={'off'} />
-                </div>
-            </div>
             <Drawer
                 anchor={'right'}
                 open={open}

@@ -6,8 +6,23 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 const User = require('./models/users');
 const cors = require('cors');
-const { exec } = require('child_process'); // Import the child_process module
+const { exec } = require('child_process');
+const fs = require('fs'); // Import the file system module to read SSL certificates
+const https = require('https'); // Import HTTPS module
+const http = require('http'); // Import HTTP module for redirection
 require('dotenv').config();
+
+// Load SSL certificates
+const privateKey = fs.readFileSync(path.resolve(__dirname, 'ssl', 'privateKey.key'), 'utf8');
+const certificate = fs.readFileSync(path.resolve(__dirname, 'ssl', 'certificate.crt'), 'utf8');
+const ca = fs.readFileSync(path.resolve(__dirname, 'ssl', 'ca_bundle.crt'), 'utf8');
+
+// Define the SSL credentials
+const credentials = {
+    key: privateKey,
+    cert: certificate,
+    ca: ca
+};
 
 // Function to check if Docker is running
 function checkDockerRunning(callback) {
@@ -91,6 +106,22 @@ app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'client-vite', 'dist', 'index.html'));
 });
 
-app.listen(process.env.PORT || 5000, () => {
-    console.log('Server is running');
+// Create an HTTP server to redirect all HTTP traffic to HTTPS
+const httpApp = express();
+httpApp.use((req, res, next) => {
+    if (req.secure) {
+        return next();
+    }
+    res.redirect(`https://${req.hostname}${req.url}`);
+});
+
+http.createServer(httpApp).listen(80, () => {
+    console.log('HTTP Server running on port 80 and redirecting to HTTPS');
+});
+
+// Create HTTPS server
+const httpsServer = https.createServer(credentials, app);
+
+httpsServer.listen(443, () => {
+    console.log('HTTPS Server is running on port 443');
 });

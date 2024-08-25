@@ -31,7 +31,7 @@ function Inbox() {
                                 backgroundColor: 'rgba(0,0,0,0.5)',
                             }
                         }} onClick={() => {
-                            navigate('/admin/respond/username=' + el.username + '&email=' + el.email)
+                            navigate('/admin/respond/' + el.username + '/' + el.email)
                         }}><ReplyIcon /></Button>
                     </div>
                 })}

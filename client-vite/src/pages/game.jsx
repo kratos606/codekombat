@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Box, Typography, Button, Drawer, Avatar } from '@mui/material'
+import { Box, Typography, Button, Drawer, Avatar,TextField } from '@mui/material'
 import { Tabs, Tab } from '@mui/material';
 import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
@@ -18,8 +18,37 @@ import axios from 'axios'
 import BaseURL from '../config/app.config'
 import Congrat from '../components/congrat.png';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import './css/game.css'
 import { useSelector } from 'react-redux';
+import Highlight from 'react-highlight'
+import 'highlight.js/styles/atom-one-dark.css'
+
+const HighlightedDescription = ({ description }) => {
+    const parseHTML = (html) => {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+  
+      const elements = Array.from(div.childNodes).map((node, index) => {
+        if (node.nodeName === 'PRE') {
+          const code = node.textContent || node.innerText;
+          return (
+            <Highlight key={index} language="python">
+              {code}
+            </Highlight>
+          );
+        }
+        return <div key={index} dangerouslySetInnerHTML={{ __html: node.outerHTML }} />;
+      });
+  
+      return elements;
+    };
+  
+    const content = parseHTML(description);
+  
+    return <div>{content}</div>;
+};
 
 function stringToColor(string) {
     let hash = 0;
@@ -67,9 +96,36 @@ function Game() {
     const [testResult, setTestResult] = useState([]);
     const [isPhone, setIsPhone] = useState(window.innerWidth < 840);
     const [tabValue, setTabValue] = useState(0);
+    const [time, setTime] = React.useState(0);
+    const [countDown, setCountDown] = React.useState(45);
+    const [timerOn, setTimerOn] = React.useState(false);
+    const [countDownOn, setCountDownOn] = React.useState(false);
     const handleTabChange = (event, newValue) => {
         setTabValue(newValue);
     };
+    React.useEffect(() => {
+        let interval = null;
+        let intervalCountDown = null;
+        if (countDownOn) {
+            intervalCountDown = setInterval(() => {
+                setCountDown((prevCountDown) => ((prevCountDown * 60) - 1) / 60);
+            }, 1000);
+        }
+        else if (!countDownOn) {
+            clearInterval(intervalCountDown);
+        }
+        if (timerOn) {
+            interval = setInterval(() => {
+                setTime((prevTime) => prevTime + 10);
+            }, 10);
+        } else if (!timerOn) {
+            clearInterval(interval);
+        }
+        return () => {
+            clearInterval(intervalCountDown)
+            clearInterval(interval)
+        }
+    }, [timerOn, countDownOn]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -111,7 +167,7 @@ function Game() {
             await axios.get(`${BaseURL}/api/game/${id}`)
                 .then(res => {
                     setGame(res.data);
-                    localStorage.getItem('code') || setCode(res.data.codeBase);
+                    setCode(res.data.codeBase);
                 })
         }
         getCodeBase();
@@ -139,7 +195,7 @@ function Game() {
                             </Button>
                         </Tooltip>
                     </Link>
-                    <Timer />
+                    {isPhone ? null : <Timer />}
                 </div>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                     <Tooltip title="Settings" style={{ color: '#001528', width: 'max-content', padding: '1rem' }}>
@@ -147,7 +203,7 @@ function Game() {
                             <SettingsOutlinedIcon sx={{ fontSize: '2rem' }} />
                         </Button>
                     </Tooltip>
-                    <Box>
+                    {isPhone ? null : <Box>
                         <button style={{ all: 'unset', cursor: 'pointer' }} onClick={() => setProfile(!profile)}><Avatar {...stringAvatar(user.username)} /></button>
                         {profile && <Box sx={{ width: '200px', position: 'absolute', backgroundColor: '#15314b', transform: 'translate(-160px,20px)', display: 'flex', flexDirection: 'column' }}>
                             <Box sx={{ width: '100%', textAlign: 'center', padding: '1rem' }}><Typography variant='h6'>{user.points}</Typography></Box>
@@ -155,17 +211,17 @@ function Game() {
                             <Link to="/user/profile" style={{ all: 'unset' }}><Button variant="text" color="success" fullWidth>Profile</Button></Link>
                             <Button variant="text" color="success" fullWidth onClick={async () => { await axios.get(`${BaseURL}/api/auth/logout`); navigate('/') }}>Logout</Button>
                         </Box>}
-                    </Box>
+                    </Box>}
                 </div>
             </nav>
             {isPhone ? (
-                <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 80px)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 120px)' }}>
                     <Box sx={{ flexGrow: 1, overflow: 'hidden', padding: '1rem', display: 'flex', flexDirection: 'column' }}>
                         {tabValue === 0 && (
                             <div className={'section'} style={{ flexGrow: 1, overflow: 'auto' }}>
                                 <div className='glass' style={{ height: '100%',overflow:'auto' }}>
                                     <h1>{game.name}</h1>
-                                    <div dangerouslySetInnerHTML={{ __html: game.description }} />
+                                    <HighlightedDescription description={game.description} />
                                 </div>
                             </div>
                         )}
@@ -183,8 +239,9 @@ function Game() {
                                         whiteboardMode={whiteboardMode}
                                         setWhiteboardMode={setWhiteboardMode}
                                         title="Solution"
-                                        button="Submit Code"
-                                        show={'on'}
+                                        button="Submit"
+                                        run={() => submit()}
+                                        phone={'off'}
                                         store={true}
                                         onClick={() => submit()}
                                         onReset={() => setCode(game.codeBase)}
@@ -214,11 +271,11 @@ function Game() {
                         indicatorColor="primary"
                         textColor="primary"
                         centered
-                        sx={{ flexShrink: 0 }}
+                        sx={{ position:'fixed',bottom:0,width:'100%' }}
                     >
-                        <Tab label="Description" />
+                        <Tab label="Info" />
                         <Tab label="Solution" />
-                        <Tab label="Test Result" />
+                        <Tab label="Result" />
                     </Tabs>
                 </div>
             ) : (
@@ -230,7 +287,7 @@ function Game() {
                     <div className={'section'} style={{ height: '100%', overflow: 'hidden' }}>
                         <div className='glass' style={{ padding: '1rem',overflow:'auto' }}>
                             <h1>{game.name}</h1>
-                            <div dangerouslySetInnerHTML={{ __html: game.description }} />
+                            <HighlightedDescription description={game.description} />
                         </div>
                     </div>
                     <Split className={'split column'} direction='vertical' minSize={0} sizes={[60, 40]}>
@@ -247,7 +304,8 @@ function Game() {
                                     whiteboardMode={whiteboardMode}
                                     setWhiteboardMode={setWhiteboardMode}
                                     title='Solution'
-                                    button='Submit Code'
+                                    button='Submit'
+                                    run={() => submit()}
                                     show={'on'}
                                     store={true}
                                     onClick={() => submit()}
@@ -278,13 +336,73 @@ function Game() {
                 BackdropProps={{ invisible: true }}
                 PaperProps={{
                     style: {
-                        width: '50%',
+                        width: isPhone ? '100%' : '50%',
                         backgroundColor: '#02203c',
                         color: 'white',
                         padding: '1rem',
                     }
                 }}
             >
+                 <IconButton 
+      onClick={() => setOpen(false)} 
+      sx={{ position: 'absolute', top: 8, left: 8, color: 'white' }}
+    >
+      <CloseIcon />
+    </IconButton>
+        {!isPhone ? null : <><Link to="/user/game" style={{ all: 'unset' }}>
+                    <Box sx={{ position: 'relative',width:'100%',margin:'3rem 0 1rem 0' }}>
+                        <Button variant="outlined" id='button' className='Button' sx={{ width: '100%' }} onClick={() => setOpen(!open)}>
+                            <FormatListBulletedIcon sx={{ fontSize: '2rem' }} />
+                            <div style={{ marginLeft: '0.5rem' }}>
+                                Questions List
+                            </div>
+                        </Button>
+                    </Box></Link>
+                    <Link to="/user" style={{ all: 'unset' }}>
+                    <Box sx={{ position: 'relative',width:'100%' }}>
+                        <Button variant="outlined" id='button' className='Button' sx={{ width: '100%' }} onClick={() => setOpen(!open)}>
+                            <ArrowForwardIcon sx={{ fontSize: '2rem' }} />
+                            <div style={{ marginLeft: '0.5rem' }}>
+                                Next Question
+                            </div>
+                        </Button>
+                    </Box></Link>
+                    <Box sx={{ width: '100%', height: 'max-content', backgroundColor: '#15314b', color: 'white', padding: '20px', borderRadius: '4px', display: open ? 'flex' : 'none', flexDirection: 'column', alignItems: 'center', boxShadow: '0 0 5px 5px rgba(0,0,0,.5)', zIndex: 1000, marginBlockStart: '0.5rem' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Timer</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 'bold' }}><span>{("0" + Math.floor((countDown * 60) / 3600)).slice(-2)}:</span>
+                <span>{("0" + Math.floor((countDown * 60) / 60) % 60).slice(-2)}:</span>
+                <span>{("0" + (Math.floor(countDown * 60) % 60)).slice(-2)}</span></Typography>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', alignSelf: 'flex-start' }}>Minutes</Typography>
+            <TextField
+                variant='outlined'
+                sx={{ width: '100%', marginTop: '10px' }}
+                type='number'
+                value={Math.floor(countDown)}
+                onChange={(e) => setCountDown(e.target.value)}
+                inputProps={{ style: { color: "black", borderRadius: '8px', backgroundColor: 'white' } }}
+            />
+            <Box sx={{ width: '100%', marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                {countDownOn ? <Button variant="contained" onClick={() => setCountDownOn(false)} sx={{ marginTop: '10px', marginInlineStart: '5px', flex: 1, fontWeight: 'bold' }} color='secondary'>Stop</Button> : <Button variant="contained" onClick={() => setCountDownOn(true)} sx={{ marginTop: '10px', marginInlineStart: '5px', flex: 1, fontWeight: 'bold' }} color='secondary'>{countDown === 45 ? "Start" : "Resume"}</Button>}
+                <Button variant="contained" sx={{ marginTop: '10px', marginInlineStart: '5px', flex: 1, fontWeight: 'bold' }} color='error' onClick={() => { setCountDown(45); setCountDownOn(false) }}>Reset</Button>
+            </Box>
+            <hr style={{
+                width: '100%',
+                marginTop: '2rem',
+                marginBottom: '2rem',
+                border: '5px solid #000',
+                borderRadius: '5px'
+            }} />
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Timer</Typography>
+            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                <span>{("0" + Math.floor((time / 60000) % 60)).slice(-2)}:</span>
+                <span>{("0" + Math.floor((time / 1000) % 60)).slice(-2)}:</span>
+                <span>{("0" + ((time / 10) % 100)).slice(-2)}</span>
+            </Typography>
+            <Box sx={{ width: '100%', marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                {timerOn ? <Button variant="contained" onClick={() => setTimerOn(false)} sx={{ marginTop: '10px', marginInlineStart: '5px', flex: 1, fontWeight: 'bold' }} color='secondary'>Stop</Button> : <Button variant="contained" onClick={() => setTimerOn(true)} sx={{ marginTop: '10px', marginInlineStart: '5px', flex: 1, fontWeight: 'bold' }} color='secondary'>{time === 0 ? "Start" : "Resume"}</Button>}
+                <Button variant="contained" sx={{ marginTop: '10px', marginInlineStart: '5px', flex: 1, fontWeight: 'bold' }} color='error' onClick={() => { setTime(0); setTimerOn(false) }}>Reset</Button>
+            </Box>
+        </Box></>}
                 <Typography className='DrawerTitle settingsTitle' variant='h3' sx={{ color: 'white' }}>
           Workspace Settings
       </Typography>
@@ -346,20 +464,6 @@ function Game() {
               display:'flex',alignItems:'center'
           }}>
             <Typography className='DrawerMenuName' variant='h6' sx={{ color: 'white', fontWeight: 300 }}>  
-                Ctrl + '
-            </Typography>
-          </div>
-          <div style={{
-              display:'flex',alignItems:'center',justifyContent:'right'
-          }}>
-            <Typography className='DrawerMenuName' variant='h6' sx={{ color: 'white', fontWeight: 300 }}>  
-                Run Code
-            </Typography>
-          </div>
-          <div style={{
-              display:'flex',alignItems:'center'
-          }}>
-            <Typography className='DrawerMenuName' variant='h6' sx={{ color: 'white', fontWeight: 300 }}>  
                 Ctrl + 0
             </Typography>
           </div>
@@ -370,11 +474,6 @@ function Game() {
                 Submit Code
             </Typography>
           </div>
-        </div>
-        <Typography className='DrawerTitle settingsTitle' variant='h3' sx={{ color: 'white' }}>
-          SketchBoard Key Bindings
-      </Typography>
-        <div className="settings-grid" style={{gap:0,gridAutoRows:'minmax(30px, min-content)',margin:'20px 0'}}>
           <div style={{
               display:'flex',alignItems:'center'
           }}>

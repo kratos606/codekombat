@@ -4,6 +4,7 @@ const { increaseUserPoints } = require('./user');
 var fs = require('fs');
 const PythonShell = require('python-shell').PythonShell;
 const { exec } = require('child_process');
+const { fork } = require('child_process');
 const { result } = require('@hapi/joi/lib/base');
 
 // Get All Games
@@ -44,7 +45,7 @@ const getRandomGame = async (req, res) => {
 
 const create = async (req, res) => {
   const { name, description, pts, codeBase, tester, testCases } = req.body;
-  if (!name || !pts || !codeBase || !tester || !testCases) return res.json({ error: "You must fill all required fields" })
+  if (!name || !pts || !codeBase || !tester) return res.json({ error: "You must fill all required fields" })
   const game = new Game({
     name,
     description,
@@ -65,7 +66,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   const { name, description, pts, codeBase, tester, testCases } = req.body;
-  if (!name || !pts || !codeBase || !tester || !testCases) return res.json({ error: "You must fill all required fields" })
+  if (!name || !pts || !codeBase || !tester) return res.json({ error: "You must fill all required fields" })
   try {
     const game = await Game.findById(req.params.id);
     game.name = name;
@@ -110,68 +111,16 @@ const submit = async (req, res) => {
     }
   });
 
-  const promises = [];
-  const testCaseResults = [];
+  const worker = fork('./worker.js');
 
-  promises.push(
-    new Promise((resolve, reject) => {
-      exec(`docker run -v $(pwd)/test:/test python-runner python ${tester.replace(/^test\//, "")}`, (error, stdout, stderr) => {
-        if (stderr) {
-          const testResults = stderr.trim().split("\n");
-          let hasCapturedError = false;
-
-          testResults.forEach((result) => {
-            if (result.includes("...")) {
-              const [testCase, status] = result.split("...");
-              const passed = status.trim() === "ok";
-              testCaseResults.push({ testCase: testCase.trim().split(' ')[0], passed });
-            } else if (!hasCapturedError && (result.includes("Error") || result.includes("Exception"))) {
-              // Capture and push the error message without traceback
-              testCaseResults.push({
-                testCase: "Error",
-                passed: false,
-                message: result
-              });
-              hasCapturedError = true;
-            }
-          });
-
-          // Assign assertion error messages to failed test cases
-          for (const result of testResults) {
-            if (result.startsWith('AssertionError')) {
-              for (const test of testCaseResults) {
-                if (!test.passed && !test.message) {
-                  test.message = result;
-                  break;  // Exit the inner loop once the error is assigned
-                }
-              }
-            }
-          }
-
-          return resolve(true);
-        }
-
-        if (stdout) {
-          const testResults = stdout.trim().split("\n");
-          testResults.forEach((result) => {
-            if (result.includes("...")) {
-              const [testCase, status] = result.split("...");
-              const passed = status.trim() === "ok";
-              testCaseResults.push({ testCase: testCase.trim().split(' ')[0], passed });
-            }
-          });
-          return resolve(true);
-        }
-      });
-    })
-  );
-
-  Promise.all(promises).then(() => {
+  worker.on('message', (testCaseResults) => {
     if (testCaseResults.every(result => result.passed)) {
       increaseUserPoints(req.user.id, game._id, game.pts, code);
     }
     return res.json(testCaseResults);
   });
+
+  worker.send({ tester });
 };
 
 module.exports = { getAllGames, getGameById, getRandomGame, create, update, remove, submit };

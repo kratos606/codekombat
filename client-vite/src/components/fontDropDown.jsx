@@ -4,7 +4,7 @@ import { Box, Select, MenuItem } from '@mui/material';
 
 function FontDropDown(props) {
     return (
-        <Box sx={{ position: 'relative', display: 'inline-block' }}>
+        <Box sx={{ position: 'relative', display: 'inline-block',width:'100%' }}>
             <Select
                 className='Button'
                 id="font-select"
@@ -14,7 +14,7 @@ function FontDropDown(props) {
                     props.setFontSize(e.target.value);
                     localStorage.setItem('fontSize', e.target.value);
                 }}
-                sx={{ width: '20vw', marginTop: '10px' }}
+                sx={{ width: '100%', marginTop: '10px' }}
                 MenuProps={{
                     PaperProps: {
                         sx: {

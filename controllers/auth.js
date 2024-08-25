@@ -15,8 +15,6 @@ const githubLoginCallback = async (req, res) => {
         const currentUser = { ...user._doc, password: undefined }
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).redirect('/');
     } catch (err) {
@@ -35,8 +33,6 @@ const facebookLoginCallback = async (req, res) => {
         const currentUser = { ...user._doc, password: undefined }
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).redirect('/');
     } catch (err) {
@@ -55,8 +51,6 @@ const googleLoginCallback = async (req, res) => {
         const currentUser = { ...user._doc, password: undefined }
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).redirect('/');
     } catch (err) {
@@ -83,8 +77,6 @@ const loginController = async (req, res) => {
         const currentUser = { ...user._doc, password: undefined }
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).send(currentUser);
     }
@@ -124,8 +116,6 @@ const registerController = async (req, res) => {
         const token = jwt.sign({ id: savedUser._id, isAdmin: savedUser.isAdmin }, process.env.JSON_WEB_TOKEN_SECRET_KEY);
         res.cookie("token", token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "none",
             maxAge: 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
         }).send();
     } catch (err) {
@@ -152,8 +142,6 @@ const logoutController = async (req, res) => {
         .cookie("token", "", {
             httpOnly: true,
             expires: new Date(0),
-            secure: true,
-            sameSite: "none",
         })
         .send();
 }

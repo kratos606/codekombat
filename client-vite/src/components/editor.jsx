@@ -2,6 +2,8 @@ import React from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { Box, Button } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import Fullscreen from '@mui/icons-material/Fullscreen';
+import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import 'codemirror/mode/python/python';
 import 'codemirror/keymap/sublime';
 import 'codemirror/keymap/emacs';
@@ -49,14 +51,13 @@ function Editor(props) {
                     {props.title}
                 </Box>
                 {props.show === 'off' || <div class="list-btn hui">
-                    <button onClick={() => {props.setIsFullScreen(!props.isFullScreen)}}>
-                        {
-                            props.isFullScreen?
-                            <span className={"material-symbols-outlined"} style={{padding:'0 15px'}}>fullscreen_exit</span> :
-                            <span className={"material-symbols-outlined"} style={{padding:'0 15px'}}>fullscreen</span>
-                        }
-                    </button>
-                    <Button variant="outlined" id='button' className='Button' style={{ marginInline: '1rem' }} onClick={props.onReset}>
+                {props.phone === 'off' || 
+                    <Button variant="outlined" id='button' className='Button' onClick={() => props.setIsFullScreen(!props.isFullScreen)}>
+                        {props.isFullScreen ? <FullscreenExit sx={{fontSize:'2rem'}} /> : <Fullscreen sx={{fontSize:'2rem'}} />}
+                    </Button>
+                    
+                }
+                <Button variant="outlined" id='button' className='Button' style={{ marginInline: '1rem' }} onClick={props.onReset}>
                         <RefreshIcon sx={{ fontSize: '2rem' }} />
                     </Button>
                     <Button variant='contained' onClick={props.onClick}>
@@ -80,6 +81,9 @@ function Editor(props) {
                     extraKeys: {
                         "Ctrl-Q": function (cm) {
                             cm.foldCode(cm.getCursor());
+                        },
+                        "Ctrl-0":function (){
+                            props.run()
                         }
                     }
                 }}

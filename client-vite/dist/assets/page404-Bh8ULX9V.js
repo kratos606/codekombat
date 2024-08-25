@@ -1,0 +1,1 @@
+import{j as e,d as r}from"./index-Cr8A9Rf2.js";function n(){return e.jsx(e.Fragment,{children:e.jsxs("form",{className:"form",style:{height:"300px"},children:[e.jsx("h1",{children:"404"}),e.jsx("h2",{children:"Page not found"}),e.jsx(r,{to:"/",children:"Go to home page"})]})})}export{n as default};

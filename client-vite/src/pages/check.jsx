@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { TextField, Button, Typography } from '@mui/material'
 import axios from 'axios'
 import BaseURL from '../config/app.config'
+import './css/auth.css'
 
 function Check() {
     const [certificate, setCertificate] = useState('')

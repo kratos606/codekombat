@@ -1,0 +1,1 @@
+import{u as s,r as t,j as o,L as n,b as r}from"./index-Cr8A9Rf2.js";import{B as i}from"./app.config-D37xPo_M.js";function c(){const a=s();return t.useEffect(()=>{(async()=>{const{data:e}=await r.get(`${i}/api/game/random`);e.length===0||e===null?(localStorage.setItem("Done","yes"),a("/user/game")):a("/user/game/"+e[0]._id)})()},[a]),o.jsx(n,{})}export{c as default};

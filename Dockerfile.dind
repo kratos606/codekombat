@@ -21,10 +21,11 @@ RUN npm install
 
 COPY . .
 
-RUN npm run client-install
+RUN npm install pm2 -g
 
 # Expose the port the app runs on
-EXPOSE 80 5173
+EXPOSE 80 443 5173
 
 # Start the application
-CMD ["npm", "run", "server"]
+CMD ["pm2", "start", "--no-daemon", "index.js"]
+
