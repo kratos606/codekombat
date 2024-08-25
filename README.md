@@ -17,7 +17,7 @@ CodeKombat is a full-stack coding platform designed for developers who want to p
 - Docker
 - MongoDB (or a MongoDB Atlas account)
 - Python
-- OPENCV
+- Pillow
 
 ### Installation
 1. Clone the repository:
