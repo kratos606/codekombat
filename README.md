@@ -1,4 +1,4 @@
-# 🥋 CodeKombat
+# CodeKombat
 
 CodeKombat is a full-stack coding platform designed for developers who want to practice and sharpen their coding skills. Inspired by coding battle platforms like LeetCode and HackerRank, CodeKombat offers a unique and engaging way to solve coding challenges.
 
